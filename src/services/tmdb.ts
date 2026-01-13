@@ -39,6 +39,163 @@ const cache = new Map<string, { data: any; timestamp: number }>();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 // ============================================================================
+// MOCK DATA FOR TESTING (used when API key is not configured)
+// ============================================================================
+
+const MOCK_MOVIES: Movie[] = [
+  {
+    id: 550,
+    title: 'Fight Club',
+    originalTitle: 'Fight Club',
+    posterPath: '/pB8BM7pdSp6B6Ih7QZ4DrQ3PmJK.jpg',
+    backdropPath: '/hZkgoQYus5vegHoetLkCJzb17zJ.jpg',
+    overview: 'A ticking-Loss time-bomb insomniac and a slippery soap salesman channel primal male aggression into a shocking new form of therapy.',
+    releaseDate: '1999-10-15',
+    voteAverage: 8.4,
+    voteCount: 26000,
+    popularity: 73.0,
+    genreIds: [18, 53, 35],
+    adult: false,
+    originalLanguage: 'en',
+  },
+  {
+    id: 680,
+    title: 'Pulp Fiction',
+    originalTitle: 'Pulp Fiction',
+    posterPath: '/d5iIlFn5s0ImszYzBPb8JPIfbXD.jpg',
+    backdropPath: '/suaEOtk1N1sgg2MTM7oZd2cfVp3.jpg',
+    overview: 'The lives of two mob hitmen, a boxer, a gangster and his wife, and a pair of diner bandits intertwine in four tales of violence and redemption.',
+    releaseDate: '1994-09-10',
+    voteAverage: 8.5,
+    voteCount: 24000,
+    popularity: 67.0,
+    genreIds: [53, 80],
+    adult: false,
+    originalLanguage: 'en',
+  },
+  {
+    id: 238,
+    title: 'The Godfather',
+    originalTitle: 'The Godfather',
+    posterPath: '/3bhkrj58Vtu7enYsRolD1fZdja1.jpg',
+    backdropPath: '/tmU7GeKVybMWFButWEGl2M4GeiP.jpg',
+    overview: 'Spanning the years 1945 to 1955, a chronicle of the fictional Italian-American Corleone crime family.',
+    releaseDate: '1972-03-14',
+    voteAverage: 8.7,
+    voteCount: 18000,
+    popularity: 88.0,
+    genreIds: [18, 80],
+    adult: false,
+    originalLanguage: 'en',
+  },
+  {
+    id: 278,
+    title: 'The Shawshank Redemption',
+    originalTitle: 'The Shawshank Redemption',
+    posterPath: '/q6y0Go1tsGEsmtFryDOJo3dEmqu.jpg',
+    backdropPath: '/kXfqcdQKsToO0OUXHcrrNCHDBzO.jpg',
+    overview: 'Framed in the 1940s for the double murder of his wife and her lover, upstanding banker Andy Dufresne begins a new life at the Shawshank prison.',
+    releaseDate: '1994-09-23',
+    voteAverage: 8.7,
+    voteCount: 23000,
+    popularity: 82.0,
+    genreIds: [18, 80],
+    adult: false,
+    originalLanguage: 'en',
+  },
+  {
+    id: 155,
+    title: 'The Dark Knight',
+    originalTitle: 'The Dark Knight',
+    posterPath: '/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
+    backdropPath: '/nMKdUUepR0i5zn0y1T4CsSB5chy.jpg',
+    overview: 'Batman raises the stakes in his war on crime. With the help of Lt. Jim Gordon and District Attorney Harvey Dent, Batman sets out to dismantle the remaining criminal organizations.',
+    releaseDate: '2008-07-16',
+    voteAverage: 8.5,
+    voteCount: 29000,
+    popularity: 95.0,
+    genreIds: [18, 28, 80, 53],
+    adult: false,
+    originalLanguage: 'en',
+  },
+  {
+    id: 13,
+    title: 'Forrest Gump',
+    originalTitle: 'Forrest Gump',
+    posterPath: '/arw2vcBveWOVZr6pxd9XTd1TdQa.jpg',
+    backdropPath: '/3h1JZGDhZ8nzxdgvkxha0qBqi05.jpg',
+    overview: 'A man with a low IQ has accomplished great things in his life and been present during significant historic events—in each case, far exceeding what anyone imagined he could do.',
+    releaseDate: '1994-06-23',
+    voteAverage: 8.5,
+    voteCount: 24000,
+    popularity: 71.0,
+    genreIds: [35, 18, 10749],
+    adult: false,
+    originalLanguage: 'en',
+  },
+  {
+    id: 603,
+    title: 'The Matrix',
+    originalTitle: 'The Matrix',
+    posterPath: '/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg',
+    backdropPath: '/fNG7i7RqMErkcqhohV2a6cV1Ehy.jpg',
+    overview: 'Set in the 22nd century, The Matrix tells the story of a computer hacker who joins a group of underground insurgents fighting the vast and powerful computers who now rule the earth.',
+    releaseDate: '1999-03-30',
+    voteAverage: 8.2,
+    voteCount: 22000,
+    popularity: 79.0,
+    genreIds: [28, 878],
+    adult: false,
+    originalLanguage: 'en',
+  },
+  {
+    id: 120,
+    title: 'The Lord of the Rings: The Fellowship of the Ring',
+    originalTitle: 'The Lord of the Rings: The Fellowship of the Ring',
+    posterPath: '/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg',
+    backdropPath: '/pIUvQ9Ed35wlWhY2oU6OmwEsmzG.jpg',
+    overview: 'Young hobbit Frodo Baggins, after inheriting a mysterious ring from his uncle Bilbo, must leave his home in order to keep it from falling into the hands of its evil creator.',
+    releaseDate: '2001-12-18',
+    voteAverage: 8.4,
+    voteCount: 22000,
+    popularity: 92.0,
+    genreIds: [12, 14, 28],
+    adult: false,
+    originalLanguage: 'en',
+  },
+  {
+    id: 569094,
+    title: 'Spider-Man: Across the Spider-Verse',
+    originalTitle: 'Spider-Man: Across the Spider-Verse',
+    posterPath: '/8Vt6mWEReuy4Of61Lnj5Xj704m8.jpg',
+    backdropPath: '/4HodYYKEIsGOdinkGi2Ucz6X9i0.jpg',
+    overview: "After reuniting with Gwen Stacy, Brooklyn's full-time, friendly neighborhood Spider-Man is catapulted across the Multiverse.",
+    releaseDate: '2023-05-31',
+    voteAverage: 8.4,
+    voteCount: 5000,
+    popularity: 150.0,
+    genreIds: [16, 28, 12, 878],
+    adult: false,
+    originalLanguage: 'en',
+  },
+  {
+    id: 157336,
+    title: 'Interstellar',
+    originalTitle: 'Interstellar',
+    posterPath: '/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg',
+    backdropPath: '/xJHokMbljvjADYdit5fK5VQsXEG.jpg',
+    overview: 'The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel.',
+    releaseDate: '2014-11-05',
+    voteAverage: 8.4,
+    voteCount: 32000,
+    popularity: 110.0,
+    genreIds: [12, 18, 878],
+    adult: false,
+    originalLanguage: 'en',
+  },
+];
+
+// ============================================================================
 // UTILITY FUNCTIONS
 // ============================================================================
 
@@ -150,12 +307,18 @@ interface TMDBMovieListResponse {
  * Get popular movies
  */
 export async function getPopularMovies(page: number = 1): Promise<Movie[]> {
-  const response = await fetchWithCache<TMDBMovieListResponse>('/movie/popular', {
-    page: String(page),
-    language: 'en-US',
-  });
+  try {
+    const response = await fetchWithCache<TMDBMovieListResponse>('/movie/popular', {
+      page: String(page),
+      language: 'en-US',
+    });
 
-  return response.results.map(normalizeMovie);
+    return response.results.map(normalizeMovie);
+  } catch (error) {
+    console.log('Using mock movie data (configure TMDB_API_KEY for real data)');
+    // Return mock data shuffled for variety
+    return [...MOCK_MOVIES].sort(() => Math.random() - 0.5);
+  }
 }
 
 /**
@@ -165,12 +328,18 @@ export async function getTrendingMovies(
   timeWindow: 'day' | 'week' = 'week',
   page: number = 1
 ): Promise<Movie[]> {
-  const response = await fetchWithCache<TMDBMovieListResponse>(
-    `/trending/movie/${timeWindow}`,
-    { page: String(page) }
-  );
+  try {
+    const response = await fetchWithCache<TMDBMovieListResponse>(
+      `/trending/movie/${timeWindow}`,
+      { page: String(page) }
+    );
 
-  return response.results.map(normalizeMovie);
+    return response.results.map(normalizeMovie);
+  } catch (error) {
+    console.log('Using mock movie data (configure TMDB_API_KEY for real data)');
+    // Return mock data shuffled for variety
+    return [...MOCK_MOVIES].sort(() => Math.random() - 0.5);
+  }
 }
 
 /**
